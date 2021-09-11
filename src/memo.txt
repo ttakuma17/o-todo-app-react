@@ -1,0 +1,137 @@
+
+既存のリストのHTML構成はアンチパターンなので下記へ記載を修正する
+
+<div class="〇〇-area">
+  <p class="title">・TODOリストカテゴリ名</p>
+  <ul>
+    <li>
+      <div　class = "list-row">
+        <p>TODO名</p>
+        <button>ボタン名</button>
+        <button>ボタン名</button>
+      </div>
+    </li>
+  </ul>
+</div>
+
+
+テスト的に下記コードで実装したところ、liタグの点がなくなってしまったので、後ほど回避方法を考える
+
+<div class="incomplete-area">
+        <p class="title">・Todo List</p>
+        <ul id="incomplete-list">
+          <li class="list-row">
+            incompleteTodo
+            <button>Working</button>
+            <button>Pending</button>
+            <button>Delete</button>
+          </li>
+        </ul>
+      </div>
+
+1.HTMLべたばりなので、繰り返し処理になりそうなもの（状態を変更する可能性のあるもの）を
+
+新規Todoの追加はできた
+未完了のTodoのリストのWorking/Pending/Deleteボタン押したときの挙動は設定が完了
+
+どのリスト内でボタンを押されたかによって、処理を切り替えたい場合にどうすべきかを考える必要がある
+
+　現時点の考え
+　　map関数で割当をするときにカスタムデータ属性を割り当てるか？　リスト名をデータ属性として設定して
+　その値を関数実行じに受け取って、その結果によって処理を変更するとか
+
+ボタンの関数の実行時に、リスト名を引数として指定するようにする
+引数の値によってリストの処理を切り替えることにすれば、switchによる条件分岐で実装が可能か
+
+→上記でボタンの判定が可能になった。
+　　一旦すべて実装して挙動に問題があるかを確認する
+
+switch (listname){
+  case 'incompletelist':
+    const newIncompleteTodo = [...incompleteTodo];
+    newIncompleteTodo.splice(index, 1);
+    const newWorkingTodo = [...workingTodo, incompleteTodo[index]];
+    setWorkingTodo(newWorkingTodo);
+    setIncompleteTodo(newIncompleteTodo);
+    break;
+  case 'pendinglist':
+    const newPendingTodo = [...pendingTodo];
+    newpendintTodo.splice(index),1;
+    const newWorkingTodo = [...workingTodo, pendingTodo[index]]
+    break;
+  default:
+    console.log('エラーです');
+}
+
+一旦Workingに入ったリストを別のリストへ移した時にテキストが保持されていない
+propsの設定か？
+
+残Todo
+テキストの内容が保持されないものがあり、以下のエラーが発生する
+Warning: Each child in a list should have a unique "key" prop.
+
+Workingボタンは最後に押したボタンのテキストの内容も保持されている
+
+const newWorkingTodoForIncomplete = [
+          ...workingTodo,
+          incompleteTodo[index]
+        ];
+
+const newWorkingTodoForPending = [...workingTodo, pendingTodo[index]];
+
+pendingの最後はテキストの内容が保持されない
+
+
+const newPendingTodoforIncomplete = [
+          ...pendingTodo,
+          newIncompleteTodo[index]
+        ];
+
+const newPendingTodoForWorking = [
+          ...pendingTodo,
+          newWorkingTodo[index]
+        ];
+
+BackTodoの最後もテキストの内容が保持されない
+
+const newIncompleteTodoBackFromComplete = [
+          ...incompleteTodo,
+          newCompleteTodo[index]
+        ];
+
+const newIncompleteTodoBackFromPending = [
+          ...incompleteTodo,
+          newPendingTodo[index]
+        ];
+
+Doneの最後もテキストの内容が保持されていない
+const newCompleteTodo = [...completeTodo, newWorkingTodo[index]];
+
+
+引き渡す値としてどちらが正しいかをテスト
+
+//テスト１
+console.log(incompleteTodo[index]);
+//テスト２
+console.log("入力値テスト");
+console.log(newIncompleteTodo[index]);
+
+１回目
+未完了のTodo１ 
+入力値テスト 
+未完了のTodo２
+
+２回目
+未完了のTodo2 
+入力値テスト 
+undefined
+
+→　値がundefinedになっていたからテキストの値がわたされなかったよう
+
+
+エラー
+
+エラー
+Warning: Invalid DOM property `class`. Did you mean `className`?
+    at div
+    at App (https://17461.csb.app/src/App.jsx:28:41)
