@@ -51,11 +51,6 @@ export const App = () => {
       case "incompletelist":
         const newIncompleteTodo = [...incompleteTodo];
         newIncompleteTodo.splice(index, 1);
-        //テスト１
-        console.log(incompleteTodo[index]);
-        //テスト２
-        console.log("入力値テスト");
-        console.log(newIncompleteTodo[index]);
         const newWorkingTodoForIncomplete = [
           ...workingTodo,
           incompleteTodo[index]
@@ -81,7 +76,7 @@ export const App = () => {
         newIncompleteTodo.splice(index, 1);
         const newPendingTodoforIncomplete = [
           ...pendingTodo,
-          newIncompleteTodo[index]
+          incompleteTodo[index]
         ];
         setPendingTodo(newPendingTodoforIncomplete);
         setIncompleteTodo(newIncompleteTodo);
@@ -89,10 +84,7 @@ export const App = () => {
       case "workinglist":
         const newWorkingTodo = [...workingTodo];
         newWorkingTodo.splice(index, 1);
-        const newPendingTodoForWorking = [
-          ...pendingTodo,
-          newWorkingTodo[index]
-        ];
+        const newPendingTodoForWorking = [...pendingTodo, workingTodo[index]];
         setPendingTodo(newPendingTodoForWorking);
         setWorkingTodo(newWorkingTodo);
         break;
@@ -104,7 +96,7 @@ export const App = () => {
     const newWorkingTodo = [...workingTodo];
     console.log(newWorkingTodo);
     newWorkingTodo.splice(index, 1);
-    const newCompleteTodo = [...completeTodo, newWorkingTodo[index]];
+    const newCompleteTodo = [...completeTodo, workingTodo[index]];
     setWorkingTodo(newWorkingTodo);
     setCompleteTodo(newCompleteTodo);
   };
@@ -115,7 +107,7 @@ export const App = () => {
         newCompleteTodo.splice(index, 1);
         const newIncompleteTodoBackFromComplete = [
           ...incompleteTodo,
-          newCompleteTodo[index]
+          completeTodo[index]
         ];
         setIncompleteTodo(newIncompleteTodoBackFromComplete);
         setCompleteTodo(newCompleteTodo);
@@ -125,7 +117,7 @@ export const App = () => {
         newPendingTodo.splice(index, 1);
         const newIncompleteTodoBackFromPending = [
           ...incompleteTodo,
-          newPendingTodo[index]
+          pendingTodo[index]
         ];
         setIncompleteTodo(newIncompleteTodoBackFromPending);
         setPendingTodo(newPendingTodo);
